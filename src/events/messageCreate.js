@@ -9,7 +9,6 @@ module.exports = class extends Event {
 
     async run(message) {
         const mentionRegexPrefix = RegExp(`^<@!?${this.bot.user.id}>`);
-        console.log(message.member)
         if (!message || message.author.bot) return;
 
         let config;

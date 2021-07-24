@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "pm2 start src/index.js --name DUP",
-    "dev": "SET NODE_ENV=development&&nodemon ."
+    "dev": "SET NODE_ENV=development&&node ."
   },
   "repository": {
     "type": "git",

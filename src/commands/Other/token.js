@@ -15,9 +15,15 @@ module.exports = class extends Command {
         const config = await this.bot.mysql.rowQuery('SELECT * FROM tokens WHERE id = ?', message.author.id)
         const token = args[0];
 
+        if (token.toLowerCase() === 'disable') {
+            await this.bot.mysql.query(`DELETE FROM tokens WHERE id = ?`, message.author.id)
+
+            return message.accept('Done! All reports will be reported under DUP from now.')
+        }
+
         const data = await fetch(`https://discord.riverside.rocks/auth.json.php?key=${token}`).then(res => res.json())
 
-        if (data.message.includes('invalid API')) return message.deny('Invalid API key.')
+        if (data.message.includes('invalid API')) return message.deny('Invalid API key. You can grab your token from: <https://discord.riverside.rocks/dashboard>')
 
         if (!config) {
             await this.bot.mysql.query(`INSERT INTO tokens SET ?`, { id: message.author.id, token })
@@ -25,7 +31,7 @@ module.exports = class extends Command {
             await this.bot.mysql.query(`UPDATE tokens SET token = ? WHERE id = ?`, [token, message.author.id])
         }
 
-        return message.accept('Done!')
+        return message.accept('Done! You should be seeing reports as your name.')
 
 
     }

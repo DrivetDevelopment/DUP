@@ -16,11 +16,14 @@ module.exports = class extends Command {
         let member = match ? await this.bot.getRESTUser(match[0]) : null
 
         let reason = args.slice(1).join(' ')
+        const user = await this.bot.mysql.rowQuery('SELECT token FROM tokens WHERE id = ?', message.author.id)
 
         if (!member) return message.deny('commands:report.notFound')
         if (member.id === message.author.id) return message.deny('commands:report.cantReportSelf')
 
-        const report = await fetch(`https://discord.riverside.rocks/report.json.php?id=${member.id}&key=${this.bot.config.ddubToken}&details=${reason ? reason : 'No reason'} (Reported by ${message.author.username})`).then(res => res.json())
+        const token = user && user.token ? user.token : null
+
+        const report = await fetch(`https://discord.riverside.rocks/report.json.php?id=${member.id}&key=${token ? token : this.bot.config.ddubToken}&details=${reason ? reason : 'No reason'} ${!token ? `(Reported by ${message.author.username})` : ''}`).then(res => res.json())
 
         if (!report) return message.deny('commands:report.reportFailed')
         if (report.message === 'You can only report a user every 10 minutes.') return message.deny('commands:report.alreadyReported')
@@ -33,9 +36,12 @@ module.exports = class extends Command {
                 color: parseInt(this.bot.colors.BLURPLE),
                 url: `https://discord.riverside.rocks/check?id=${member.id}`,
                 title: await message.translate('commands:report.successTitle'),
-                description: await message.translate('commands:report.successTitle', { user: member.username }),
+                description: await message.translate('commands:report.successDescription', { user: member.username }),
 
             }
         })
+        if (!token) {
+            message.channel.createMessage('Want to report users with whitelabel? Use the `d!token` command! https://cdn.drivet.xyz/dupwhitelabel.png')
+        }
     }
 };
