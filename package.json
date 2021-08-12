@@ -23,7 +23,7 @@
     "axios": "^0.21.1",
     "cat-loggr": "^1.2.2",
     "config": "^3.3.6",
-    "fastify": "^3.20.1",
+    "express": "^4.17.1",
     "node-fetch": "^2.6.1",
     "path": "^0.12.7",
     "slash-create": "^3.5.0"

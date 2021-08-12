@@ -1,8 +1,12 @@
-const config = require('config').util.toObject()
-const { SlashCreator, FastifyServer } = require('slash-create');
+const config = require('config').util.toObject();
+const express = require('express');
+const app = express();
+const { SlashCreator, ExpressServer } = require('slash-create');
 const path = require('path');
 const CatLoggr = require('cat-loggr');
 const logger = new CatLoggr().setLevel(process.env.NODE_ENV === 'development' ? 'debug' : 'info');
+
+app.use(express.json())
 
 const creator = new SlashCreator({
   applicationID: config.bot.clientId,
@@ -20,9 +24,8 @@ creator.on('commandRegister', (command) => logger.info(`Registered command ${com
 creator.on('commandError', (command, error) => logger.error(`Command ${command.commandName}:`, error));
 
 creator
-  .withServer(new FastifyServer())
+  .withServer(new ExpressServer(app))
   .registerCommandsIn(path.join(__dirname, 'commands'))
   .syncCommands()
-  .startServer();
 
-logger.info(`Server running on port ${config.webserver.port}`)
+app.listen(config.webserver.port, () => logger.info(`Server running on port ${config.webserver.port}`))
