@@ -8,4 +8,6 @@ ngrok.exe
 node_modules
 package-lock.json
 
+# exclude New Relic stuff i guess lol
 newrelic.js
+newrelic_agent.log
