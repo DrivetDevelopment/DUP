@@ -1,6 +1,6 @@
 const { SlashCommand, CommandOptionType, ComponentType, ButtonStyle } = require('slash-create');
 const REST = require('../utils/rest');
-const { default: axios } = require('axios');
+const axios = require('axios');
 
 module.exports = class CheckCommand extends SlashCommand {
   constructor(creator) {
